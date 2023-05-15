@@ -1,1 +1,1 @@
-rootProject.name = "backend-ktor"
+rootProject.name = "todo"
