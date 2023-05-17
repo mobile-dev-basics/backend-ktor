@@ -4,12 +4,10 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import com.mobile.plugins.*
-import com.mobile.security.hashing.SHA256HashingService
-import com.mobile.security.token.JwtTokenService
 import com.mobile.security.token.TokenConfig
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module, )
         .start(wait = true)
 }
 
@@ -20,7 +18,8 @@ fun Application.module() {
         expiresIn = 365L * 1000L * 68L * 24L,
         secret = "6A576E5A7234753778214125442A472D4A614E645267556B5870327335763879"
     )
-    DatabaseFactory.init()
+    println(environment.config.port)
+    DatabaseFactory.init(environment.config)
     configureSerialization()
     configureSecurity(tokenConfig)
     configureKoin()
