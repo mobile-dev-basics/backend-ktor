@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TodoCreateRequest
-    (val name: String,
+    (val title: String,
     val description: String,
     val priority: String,
     val date: Long)

@@ -6,16 +6,15 @@ import java.time.LocalDate
 
 
 data class Todo(
+    val id: Long,
     var name: String,
-    var creationDate: LocalDate,
     var user: User,
-    val id: Long
-){
-    var priority: Int = 2
-    var type: Type = Type.GLOBAL
-    var description: String? = null
-    var endDate: LocalDate? = null
-}
+    var description: String,
+    var creationDate: LocalDate,
+    var endDate: LocalDate,
+    var priority: Int = 2,
+    var type: Type = Type.GLOBAL,
+)
 
 object Todos : Table(){
     val id = long("id").autoIncrement()
@@ -23,8 +22,8 @@ object Todos : Table(){
     val creationDate = date("creation_date")
     val priority = integer("priority")
     val type = enumerationByName<Type>("type", 50)
-    val description = text("description").nullable()
-    val endDate = date("end_date").nullable()
+    val description = text("description")
+    val endDate = date("end_date")
     val userId = long("user_id").references(Users.id)
 
     override val primaryKey = PrimaryKey(id)

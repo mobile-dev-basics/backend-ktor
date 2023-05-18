@@ -1,5 +1,6 @@
 package com.mobile.plugins
 
+import ch.qos.logback.classic.Logger
 import com.mobile.repository.TodoRepository
 import com.mobile.repository.TodoRepositoryImpl
 import com.mobile.repository.UserRepository
@@ -17,8 +18,11 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
+import org.slf4j.LoggerFactory
 
 fun Application.configureKoin(){
+    val logger = LoggerFactory.getLogger("logger ->")
+
     val todoModule = module{
         singleOf(::TodoRepositoryImpl) { bind<TodoRepository>()}
         singleOf(::TodoService)
@@ -31,9 +35,12 @@ fun Application.configureKoin(){
         singleOf (::SHA256HashingService){bind<HashingService>()}
         singleOf (::JwtTokenService){bind<TokenService>()}
     }
+    val loggerModule = module {
+        single<Logger> { LoggerFactory.getLogger("logger") as Logger }
+    }
     install(Koin){
         slf4jLogger()
-        modules(todoModule, userModule, securityModule)
+        modules(todoModule, userModule, securityModule, loggerModule)
         createEagerInstances()
     }
 }

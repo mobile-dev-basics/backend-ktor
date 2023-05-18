@@ -28,6 +28,7 @@ repositories {
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
+    implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
     implementation("io.ktor:ktor-serialization-gson:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
@@ -44,6 +45,8 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jvm:2.3.0")
     implementation("io.ktor:ktor-server-auth-jwt-jvm:2.3.0")
     implementation("commons-codec:commons-codec:1.15")
+    implementation("io.ktor:ktor-serialization-jackson:$ktor_version")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.1")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
