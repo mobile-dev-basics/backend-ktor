@@ -23,7 +23,7 @@ class TodoService(private val todoRepository: TodoRepository) : KoinComponent {
         return todoRepository.addTodo(name, user.id, creationDate, endDate, description, priority)
     }
 
-    suspend fun updateTodo(id: Long, name: String?, endDate: LocalDate?, description: String?, priority: Int?): Boolean {
+    suspend fun updateTodo(id: Long, name: String, endDate: LocalDate, description: String, priority: Int): Boolean {
         return todoRepository.updateTodo(id, name, priority, description, endDate)
     }
 

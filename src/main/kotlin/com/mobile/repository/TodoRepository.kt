@@ -17,7 +17,7 @@ interface TodoRepository {
     suspend fun findTodo(id: Long) : Todo?
     suspend fun addTodo(name: String, userId: Long, creationDate: LocalDate, endDate: LocalDate, description: String, priority: Int) : Todo?
 
-    suspend fun updateTodo(id: Long, name: String?, priority: Int?, description: String?, endDate: LocalDate?) : Boolean
+    suspend fun updateTodo(id: Long, name: String, priority: Int, description: String, endDate: LocalDate) : Boolean
 
     suspend fun deleteTodo(id:Long) : Boolean
 
@@ -72,13 +72,13 @@ class TodoRepositoryImpl : TodoRepository, KoinComponent{
     }
 
 
-    override suspend fun updateTodo(id: Long, name: String?, priority: Int?, description: String?, endDate: LocalDate?) =
+    override suspend fun updateTodo(id: Long, name: String, priority: Int, description: String, endDate: LocalDate) =
         dbQuery {
             Todos.update({ Todos.id eq id}){
-                if(name != null) it[Todos.name] = name
-                if(priority != null) it[Todos.priority] = priority
-                if(description != null) it[Todos.description] = description
-                if(endDate != null) it[Todos.endDate] = endDate
+                it[Todos.name] = name
+                it[Todos.priority] = priority
+                it[Todos.description] = description
+                it[Todos.endDate] = endDate
             } > 0
         }
 

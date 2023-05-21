@@ -7,6 +7,7 @@ data class TodoResponse(
     val id : Long,
     val title : String,
     val description: String,
-    val endDate: LocalDate,
-    val priority: String
+    val priority: String,
+    var creationDate: LocalDate,
+    val endDate: Long
 )

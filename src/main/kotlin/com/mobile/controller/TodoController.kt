@@ -2,6 +2,7 @@ package com.mobile.controller
 
 import ch.qos.logback.classic.Logger
 import com.mobile.dto.requests.TodoCreateRequest
+import com.mobile.dto.responses.TodoResponse
 import com.mobile.models.Todo
 import com.mobile.models.User
 import com.mobile.services.TodoService
@@ -16,6 +17,7 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 
 
@@ -102,6 +104,7 @@ fun Route.getTodoList(todoService: TodoService, userService: UserService, logger
             logger.info("Got request to get all todos")
             val principal = call.principal<JWTPrincipal>()
             val userId = principal?.getClaim("userId", Long::class)
+            logger.info("Got user Id $userId")
             val user : User?
             if (userId != null) {
                 user = userService.findById(userId)
@@ -116,8 +119,14 @@ fun Route.getTodoList(todoService: TodoService, userService: UserService, logger
                 logger.info("User is not found, failed")
                 return@get
             }
+            
             val response = todoService.getAllTodo(userId)
-            call.respond(HttpStatusCode.OK, response)
+            val result = mutableListOf<TodoResponse>()
+            response.forEach{
+                result.add(TodoResponse(id = it.id, title = it.name, description =  it.description, creationDate =  it.creationDate, endDate = 0, priority =  "Low"))
+            }
+
+            call.respond(HttpStatusCode.OK, result)
             logger.info("Successfully responded to get request!")
         }
     }
