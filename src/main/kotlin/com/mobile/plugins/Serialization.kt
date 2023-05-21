@@ -1,18 +1,16 @@
 package com.mobile.plugins
 
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.response.*
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
-import io.ktor.server.routing.*
-import io.ktor.serialization.gson.*
+import io.ktor.server.plugins.contentnegotiation.*
+
 
 fun Application.configureSerialization() {
     install(ContentNegotiation){
-        gson()
-    }
-    routing {
-        get("/json/kotlinx-serialization") {
-            call.respond(mapOf("hello" to "world"))
+        jackson{
+            registerModule(JavaTimeModule())
         }
+
     }
 }
