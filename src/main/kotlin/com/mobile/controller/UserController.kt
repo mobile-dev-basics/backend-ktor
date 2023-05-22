@@ -2,6 +2,8 @@ package com.mobile.controller
 
 import ch.qos.logback.classic.Logger
 import com.google.gson.Gson
+import com.mobile.clients.BrokerClient
+import com.mobile.clients.RedisConfiguration
 import com.mobile.dto.requests.LoginCredentials
 import com.mobile.dto.requests.RegisterCredentials
 import com.mobile.dto.responses.AuthResponse
@@ -21,25 +23,25 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 
-fun Route.userRouting(tokenConfig: TokenConfig){
+fun Route.userRouting(tokenConfig: TokenConfig) {
 
     // val todoService by inject<TodoService>()
     val userService by inject<UserService>()
-    val hashingService by inject<HashingService> ()
-    val tokenService by inject<TokenService> ()
+    val hashingService by inject<HashingService>()
+    val tokenService by inject<TokenService>()
+    val brokerClient by inject<BrokerClient>()
     val logger by inject<Logger>()
 
-    route("/api"){
-        post("/login"){
+    route("/api") {
+        post("/login") {
             logger.info("Got request to log in!")
-            val request = kotlin.runCatching { call.receiveNullable<LoginCredentials>() }.getOrNull() ?:
-                kotlin.run{
-                    logger.info("Bad request could not map to LoginCredentials!")
-                    call.respond(HttpStatusCode.BadRequest)
-                    return@post
-                }
+            val request = kotlin.runCatching { call.receiveNullable<LoginCredentials>() }.getOrNull() ?: kotlin.run {
+                logger.info("Bad request could not map to LoginCredentials!")
+                call.respond(HttpStatusCode.BadRequest)
+                return@post
+            }
             val user = userService.getUserByEmail(email = request.email)
-            if (user == null){
+            if (user == null) {
                 logger.info("Incorrect username or password!")
                 println("The user is null")
                 call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
@@ -53,7 +55,7 @@ fun Route.userRouting(tokenConfig: TokenConfig){
                     salt = user.salt
                 )
             )
-            if (!isValidPassword){
+            if (!isValidPassword) {
                 logger.info("The password could not be verified")
                 call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
                 return@post
@@ -70,24 +72,23 @@ fun Route.userRouting(tokenConfig: TokenConfig){
             logger.info("Successfully logged in!")
 
         }
-        post("/register"){
+        post("/register") {
             logger.info("Received a request to register a user")
-            val request = kotlin.runCatching { call.receiveNullable<RegisterCredentials>() }.getOrNull() ?:
-                            kotlin.run {
-                                logger.info("Could not map request to RegisterCredentials()")
-                                call.respond(HttpStatusCode.BadRequest)
-                                return@post
-                            }
+            val request = kotlin.runCatching { call.receiveNullable<RegisterCredentials>() }.getOrNull() ?: kotlin.run {
+                logger.info("Could not map request to RegisterCredentials()")
+                call.respond(HttpStatusCode.BadRequest)
+                return@post
+            }
             val areFieldBlank = request.email.isBlank() || request.password.isBlank()
             val isPasswordShort = request.password.length < 4
 
-            if (userService.getUserByEmail(request.email) != null){
+            if (userService.getUserByEmail(request.email) != null) {
                 logger.info("User already exists!")
                 call.respond(HttpStatusCode.Conflict, "Email is already registered!")
                 return@post
             }
 
-            if(areFieldBlank || isPasswordShort){
+            if (areFieldBlank || isPasswordShort) {
                 logger.info("Bad request! Fields are blank or password is too short")
                 call.respond(HttpStatusCode.Conflict, "Bad request")
                 return@post
@@ -95,23 +96,33 @@ fun Route.userRouting(tokenConfig: TokenConfig){
 
             val saltedHash = hashingService.generateSaltedHash(request.password)
             val wasAcknowledged = userService.register(request.name, request.email, saltedHash.hash, saltedHash.salt)
-            if (wasAcknowledged == null){
+            if (wasAcknowledged == null) {
                 logger.info("Database failed to register the user!")
                 call.respond(HttpStatusCode.Conflict, "Failed to register")
                 return@post
-            }
-            else{
+            } else {
                 call.respond(HttpStatusCode.OK, message = AuthResponse("Success!"))
                 logger.info("Successfully registered the user")
             }
         }
+        post("/invite") {
+            logger.info("Received a request to send invite email")
+            val email = call.request.queryParameters["email"]
+            if (email == null) {
+                call.respond(HttpStatusCode.BadRequest, "Email required")
+                return@post
+            }
+            brokerClient.publish(email, RedisConfiguration.WELCOME_EMAIL_CHANNEL)
+            call.respond(HttpStatusCode.OK)
+            logger.info("Message published to broker successfully")
+        }
     }
 }
 
-fun Route.secretInfo(){
+fun Route.secretInfo() {
     val userService by inject<UserService>()
     authenticate {
-        get("/secret"){
+        get("/secret") {
             val principal = call.principal<JWTPrincipal>()
             val userId = principal?.getClaim("userId", String::class)
             call.respond(HttpStatusCode.OK, "Your id: $userId")

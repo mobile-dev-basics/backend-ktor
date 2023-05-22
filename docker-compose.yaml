@@ -1,0 +1,22 @@
+version: "3.3"
+
+services:
+  db:
+    container_name: demo_postgres
+    image: "postgres"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "Gungun124"
+    ports:
+      - "8888:5432"
+
+  redis:
+#    cli docker exec -it  redis:5.0.5  redis-cli
+    image: redis:5.0.5
+    container_name: redis
+    restart: unless-stopped
+    hostname: redis
+    network_mode: bridge
+    ports:
+      - "6379:6379"
+
