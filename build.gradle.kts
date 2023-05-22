@@ -1,4 +1,5 @@
 val ktor_version: String by project
+val redis_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
 val koin_version: String by project
@@ -45,6 +46,8 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jvm:2.3.0")
     implementation("io.ktor:ktor-server-auth-jwt-jvm:2.3.0")
     implementation("commons-codec:commons-codec:1.15")
+    implementation("javax.mail:mail:1.4.7")
+    implementation("redis.clients:jedis:$redis_version")
     implementation("io.ktor:ktor-serialization-jackson:$ktor_version")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.1")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
