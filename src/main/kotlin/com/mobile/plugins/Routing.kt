@@ -1,7 +1,7 @@
 package com.mobile.plugins
 
-import com.mobile.controller.secretInfo
 import com.mobile.controller.todoRouting
+import com.mobile.controller.userInfo
 import com.mobile.controller.userRouting
 import com.mobile.repository.UserRepositoryImpl
 import com.mobile.security.token.TokenConfig
@@ -14,6 +14,6 @@ fun Application.configureRouting(tokenConfig: TokenConfig) {
     routing {
         todoRouting()
         userRouting(tokenConfig)
-        secretInfo()
+        userInfo()
     }
 }
