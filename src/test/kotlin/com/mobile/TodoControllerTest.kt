@@ -1,16 +1,17 @@
 package com.mobile
 
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.server.testing.*
-import kotlin.test.*
-import io.ktor.http.*
 import com.mobile.plugins.*
 import com.mobile.security.token.TokenConfig
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.server.testing.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
-class ApplicationTest {
+class TodoControllerTest {
     @Test
-    fun testRoot() = testApplication {
+    fun deleteToDoTest() = testApplication {
         val tokenConfig = TokenConfig(
             issuer = "http://0.0.0.0:8080",
             audience = "http://0.0.0.0:8080/api",
@@ -24,9 +25,9 @@ class ApplicationTest {
             configureKoin()
             configureRouting(tokenConfig)
         }
-        client.get("/").apply {
-            assertEquals(HttpStatusCode.OK, status)
-            assertEquals("Hello World!", bodyAsText())
+        client.delete("/api/todo/100000000").apply {
+            assertEquals(HttpStatusCode.Conflict, status)
+            assertEquals("User or todo is not found!", bodyAsText())
         }
     }
 }
