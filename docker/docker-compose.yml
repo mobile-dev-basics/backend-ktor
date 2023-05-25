@@ -1,0 +1,46 @@
+version: '3.9'
+
+services:
+  db:
+    container_name: demo_postgres
+    image: "postgres"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "Gungun124"
+    ports:
+      - "8888:5432"
+
+  testdb:
+    container_name: test_demo_postgres
+    image: "postgres"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "Gungun124"
+    ports:
+      - "8889:5432"
+
+  redis:
+#    cli docker exec -it  redis:5.0.5  redis-cli
+    image: redis:5.0.5
+    container_name: redis
+    restart: unless-stopped
+    hostname: redis
+    network_mode: bridge
+    ports:
+      - "6379:6379"
+      
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin

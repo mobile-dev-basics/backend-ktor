@@ -1,13 +1,17 @@
 package com.mobile
 
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import com.mobile.plugins.*
+import com.mobile.plugins.DatabaseFactory
+import com.mobile.plugins.configureKoin
+import com.mobile.plugins.configureRouting
+import com.mobile.plugins.configureSecurity
+import com.mobile.plugins.configureSerialization
 import com.mobile.security.token.TokenConfig
+import io.ktor.server.application.Application
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module, )
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
 
