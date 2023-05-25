@@ -1,6 +1,5 @@
 package com.mobile.dto.responses
 
-import com.mobile.models.Type
 import java.time.LocalDate
 
 data class TodoResponse(
@@ -8,6 +7,6 @@ data class TodoResponse(
     val title : String,
     val description: String,
     val priority: String,
-    var creationDate: LocalDate,
+    var creationDate: Long,
     val endDate: Long
 )
