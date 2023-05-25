@@ -1,4 +1,4 @@
-package com.mobile
+package com.mobile.integration
 
 import com.mobile.dto.requests.LoginCredentials
 import com.mobile.dto.responses.AuthResponse
@@ -32,7 +32,7 @@ class TodoControllerTest {
             setBody(LoginCredentials("test@gmail.com", "test"))
         }
         val authResponse = httpResponse.body<AuthResponse>()
-        client.get("/api/todo/100000000") {
+        client.get("/api/todo/1") {
             headers {
                 append(HttpHeaders.Authorization, "Bearer ${authResponse.token}")
             }
@@ -40,5 +40,6 @@ class TodoControllerTest {
             assertEquals(HttpStatusCode.OK, status)
             assertEquals("Successfully responded to get request!", bodyAsText())
         }
+        DatabaseFactory.clear()
     }
 }
