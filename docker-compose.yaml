@@ -10,6 +10,15 @@ services:
     ports:
       - "8888:5432"
 
+  testdb:
+    container_name: test_demo_postgres
+    image: "postgres"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "Gungun124"
+    ports:
+      - "8889:5432"
+
   redis:
 #    cli docker exec -it  redis:5.0.5  redis-cli
     image: redis:5.0.5
